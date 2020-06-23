@@ -1,4 +1,6 @@
 # frozen_string_literal: true
+require 'securerandom'
+
 module Excon
   class SSLSocket < Socket
     HAVE_NONBLOCK = [:connect_nonblock, :read_nonblock, :write_nonblock].all? do |m|
@@ -97,6 +99,11 @@ module Excon
           user, pass = Utils.unescape_form(@data[:proxy][:user].to_s), Utils.unescape_form(@data[:proxy][:password].to_s)
           auth = ["#{user}:#{pass}"].pack('m').delete(Excon::CR_NL)
           request += "Proxy-Authorization: Basic #{auth}#{Excon::CR_NL}"
+        end
+
+        if @data[:proxy_uuid_header]
+          trace_id = SecureRandom.uuid
+          request += "#{@data[:proxy_uuid_header]}: #{trace_id}#{Excon::CR_NL}"
         end
 
         request += "Proxy-Connection: Keep-Alive#{Excon::CR_NL}"
