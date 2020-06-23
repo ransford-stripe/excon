@@ -100,6 +100,11 @@ Shindo.tests('Excon proxy support') do
           connection.data[:proxy][:scheme]
         end
 
+        tests('connection.data[:proxy_uuid_header]').returns('X-Trace-Id') do
+          connection = Excon.new('https://secret.com', :proxy_uuid_header => 'X-Trace-Id')
+          connection.data[:proxy_uuid_header]
+        end
+
         tests('with disable_proxy set') do
           connection = nil
 
